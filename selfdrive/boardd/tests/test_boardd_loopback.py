@@ -20,6 +20,7 @@ def reset_panda(fn):
   @wraps(fn)
   def wrapper():
     p = Panda()
+    p.flash()
     for i in [0, 1, 2, 0xFFFF]:
       p.can_clear(i)
     p.reset()
