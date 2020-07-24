@@ -87,7 +87,7 @@ pipeline {
             lock(resource: "", label: 'eon2', inversePrecedence: true, variable: 'device_ip', quantity: 1){
               timeout(time: 60, unit: 'MINUTES') {
                 //setup_environment(device_ip)
-                phone(ip, readFile("selfdrive/test/setup_phone_ci.sh"), "git checkout")
+                phone(device_ip, readFile("selfdrive/test/setup_phone_ci.sh"), "git checkout")
                 //phone(device_ip, "cd selfdrive/test/process_replay && ./camera_replay.py", "camerad/modeld replay")
               }
             }
