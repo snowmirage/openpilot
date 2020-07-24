@@ -1,3 +1,26 @@
+def phone(String ip, String cmd, String step_label="") {
+  def label_txt = step_label == null || step_label.isEmpty() ? cmd : step_label;
+  env.TEST_DIR = "/data/openpilot"
+
+  def ssh_cmd = """
+                  ssh -o StrictHostKeyChecking=no -i id_rsa -p 8022 root@${ip} '/usr/bin/bash -sl <<EOF
+                  export CI=1
+                  export TEST_DIR="${env.TEST_DIR}"
+                  export GIT_BRANCH="${env.GIT_BRANCH}"
+                  export GIT_COMMIT="${env.GIT_COMMIT}"
+                  cd ${TEST_DIR} || true
+                  set -ex
+                  ${cmd}
+EOF'"""
+
+  sh label: "phone: ${label_txt}",
+     script: ssh_cmd
+}
+
+def setup_environment(String ip) {
+  phone(ip, 'echo "$(cat selfdrive/test/setup_phone_ci.sh)"')
+}
+
 pipeline {
   agent {
     docker {
@@ -16,7 +39,7 @@ pipeline {
         branch 'devel-staging'
       }
       steps {
-        lock(resource: "", label: 'eon-build', inversePrecedence: true, variable: 'eon_ip', quantity: 1){
+        lock(resource: "", label: 'eon-build', inversePrecedence: true, variable: 'device_ip', quantity: 1){
           timeout(time: 60, unit: 'MINUTES') {
             dir(path: 'selfdrive/test') {
               sh 'pip install paramiko'
@@ -38,13 +61,14 @@ pipeline {
 
       parallel {
 
+        /*
         stage('Build') {
           environment {
             CI_PUSH = "${env.BRANCH_NAME == 'master' ? 'master-ci' : ''}"
           }
 
           steps {
-            lock(resource: "", label: 'eon', inversePrecedence: true, variable: 'eon_ip', quantity: 1){
+            lock(resource: "", label: 'eon', inversePrecedence: true, variable: 'device_ip', quantity: 1){
               timeout(time: 60, unit: 'MINUTES') {
                 dir(path: 'selfdrive/test') {
                   sh 'pip install paramiko'
@@ -54,23 +78,23 @@ pipeline {
             }
           }
         }
+        */
 
         stage('Replay Tests') {
           steps {
-            lock(resource: "", label: 'eon2', inversePrecedence: true, variable: 'eon_ip', quantity: 1){
+            lock(resource: "", label: 'eon2', inversePrecedence: true, variable: 'device_ip', quantity: 1){
               timeout(time: 60, unit: 'MINUTES') {
-                dir(path: 'selfdrive/test') {
-                  sh 'pip install paramiko'
-                  sh 'python phone_ci.py "cd selfdrive/test/process_replay && ./camera_replay.py"'
-                }
+                setup_environment(device_ip)
+                phone(device_ip, "cd selfdrive/test/process_replay && ./camera_replay.py", "camerad/modeld replay")
               }
             }
           }
         }
 
+        /*
         stage('HW Tests') {
           steps {
-            lock(resource: "", label: 'eon', inversePrecedence: true, variable: 'eon_ip', quantity: 1){
+            lock(resource: "", label: 'eon', inversePrecedence: true, variable: 'device_ip', quantity: 1){
               timeout(time: 60, unit: 'MINUTES') {
                 dir(path: 'selfdrive/test') {
                   sh 'pip install paramiko'
@@ -82,8 +106,10 @@ pipeline {
             }
           }
         }
+        */
 
       }
     }
+
   }
 }
