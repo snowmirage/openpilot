@@ -19,7 +19,7 @@ EOF'"""
 }
 
 def setup_environment(String ip) {
-  phone(ip, readFile("selfdrive/test/setup_phone_ci.sh"), "git checkout")
+  //phone(ip, readFile("selfdrive/test/setup_phone_ci.sh"), "git checkout")
   //phone(ip, 'echo "$(cat selfdrive/test/setup_phone_ci.sh)"', "git checkout")
 }
 
@@ -86,7 +86,8 @@ pipeline {
           steps {
             lock(resource: "", label: 'eon2', inversePrecedence: true, variable: 'device_ip', quantity: 1){
               timeout(time: 60, unit: 'MINUTES') {
-                setup_environment(device_ip)
+                //setup_environment(device_ip)
+                phone(ip, readFile("selfdrive/test/setup_phone_ci.sh"), "git checkout")
                 //phone(device_ip, "cd selfdrive/test/process_replay && ./camera_replay.py", "camerad/modeld replay")
               }
             }
