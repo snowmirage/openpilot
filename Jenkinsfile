@@ -11,7 +11,7 @@ def phone(String ip, String cmd, String step_label="") {
                 export GIT_COMMIT="${env.GIT_COMMIT}"
                 cd ${TEST_DIR} || true
                 set -ex
-                ${cmd}
+                $(cat selfdrive/test/setup.sh)
 EOF'"""
 
   sh label: "phone: ${label_txt}",
