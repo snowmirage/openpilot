@@ -3,6 +3,7 @@ def phone(String ip, String cmd, String step_label="") {
   env.TEST_DIR = "/data/openpilot"
 
   def ssh_cmd = """
+                printenv
                 ssh -o StrictHostKeyChecking=no -i selfdrive/test/id_rsa -p 8022 root@${ip} '/usr/bin/bash -sl <<EOF
                 export CI=1
                 export TEST_DIR="${env.TEST_DIR}"
@@ -85,7 +86,7 @@ pipeline {
             lock(resource: "", label: 'eon2', inversePrecedence: true, variable: 'device_ip', quantity: 1){
               timeout(time: 60, unit: 'MINUTES') {
                 setup_environment(device_ip)
-                phone(device_ip, "cd selfdrive/test/process_replay && ./camera_replay.py", "camerad/modeld replay")
+                //phone(device_ip, "cd selfdrive/test/process_replay && ./camera_replay.py", "camerad/modeld replay")
               }
             }
           }
