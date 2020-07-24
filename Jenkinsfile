@@ -3,14 +3,14 @@ def phone(String ip, String cmd, String step_label="") {
   env.TEST_DIR = "/data/openpilot"
 
   def ssh_cmd = """
-                  ssh -o StrictHostKeyChecking=no -i id_rsa -p 8022 root@${ip} '/usr/bin/bash -sl <<EOF
-                  export CI=1
-                  export TEST_DIR="${env.TEST_DIR}"
-                  export GIT_BRANCH="${env.GIT_BRANCH}"
-                  export GIT_COMMIT="${env.GIT_COMMIT}"
-                  cd ${TEST_DIR} || true
-                  set -ex
-                  ${cmd}
+                ssh -o StrictHostKeyChecking=no -i selfdrive/test/id_rsa -p 8022 root@${ip} '/usr/bin/bash -sl <<EOF
+                export CI=1
+                export TEST_DIR="${env.TEST_DIR}"
+                export GIT_BRANCH="${env.GIT_BRANCH}"
+                export GIT_COMMIT="${env.GIT_COMMIT}"
+                cd ${TEST_DIR} || true
+                set -ex
+                ${cmd}
 EOF'"""
 
   sh label: "phone: ${label_txt}",
@@ -18,7 +18,7 @@ EOF'"""
 }
 
 def setup_environment(String ip) {
-  phone(ip, 'echo "$(cat selfdrive/test/setup_phone_ci.sh)"')
+  phone(ip, 'echo "$(cat selfdrive/test/setup_phone_ci.sh)"', "git checkout")
 }
 
 pipeline {
