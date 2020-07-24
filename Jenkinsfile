@@ -19,7 +19,7 @@ EOF'"""
 }
 
 def setup_environment(String ip) {
-  phone(ip, 'echo "$(cat selfdrive/test/setup_ci.sh)"', "git checkout")
+  phone(ip, '$(cat selfdrive/test/setup_ci.sh)', "git checkout")
 }
 
 pipeline {
