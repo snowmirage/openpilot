@@ -19,7 +19,7 @@ EOF'"""
 }
 
 def setup_environment(String ip) {
-  phone(ip, 'echo "$(printenv)"', "git checkout")
+  phone(ip, readFile("selfdrive/test/setup_phone_ci.sh"), "git checkout")
   //phone(ip, 'echo "$(cat selfdrive/test/setup_phone_ci.sh)"', "git checkout")
 }
 

@@ -13,8 +13,6 @@ if [ -z "$TEST_DIR" ]; then
   echo "TEST_DIR must be set"
   exit 1
 fi
-echo "done"
-exit 0
 
 # TODO: never clear qcom_replay cache
 # clear scons cache dirs that haven't been written to in one day
