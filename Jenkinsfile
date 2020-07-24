@@ -14,7 +14,7 @@ def phone(String ip, String cmd, String step_label="") {
 EOF'"""
 
   sh label: "phone: ${label_txt}",
-     script: ssh_cmd
+     script: """/bin/bash -c "${ssh_cmd}" """
 }
 
 def setup_environment(String ip) {
